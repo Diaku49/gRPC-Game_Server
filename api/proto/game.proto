@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package game;
+
+option go_package = "github.com/Diaku49/grpc-game-server/pb";
+
+import "api/proto/player.proto";
+
+// Game
+enum GameStatus {
+    WAITING = 0;
+    ACTIVE = 1;
+    FINISHED = 2;
+}
+
+message GameRoom {
+    string id = 1;
+    repeated Player players = 2;
+    repeated Food foods = 3;
+    GameStatus status = 4;
+}
+
+message Food {
+    int32 x = 1;
+    int32 y = 2;
+    bool active = 3;
+}
