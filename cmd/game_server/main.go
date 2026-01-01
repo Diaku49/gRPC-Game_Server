@@ -13,8 +13,9 @@ import (
 
 	"github.com/Diaku49/grpc-game-server/config"
 	"github.com/Diaku49/grpc-game-server/db"
-	gs "github.com/Diaku49/grpc-game-server/internals/game_server"
-	"github.com/Diaku49/grpc-game-server/internals/redis"
+	gs "github.com/Diaku49/grpc-game-server/internal/game_server"
+	"github.com/Diaku49/grpc-game-server/internal/redis"
+	"github.com/Diaku49/grpc-game-server/internal/repositories"
 	"github.com/Diaku49/grpc-game-server/pb"
 	"google.golang.org/grpc"
 )
@@ -45,12 +46,13 @@ func InitServer() {
 	}
 
 	// Initializig dbs
-	gameDB, err := db.InitializeDb(cfg.DbUrl)
+	db, err := db.InitializeDb(cfg.DbUrl)
 	if err != nil {
 		log.Fatalf("Database initialization failed, error: %v", err)
 	}
-	fmt.Printf("Game database initialized successfully, %v", gameDB)
+	fmt.Println("Game database initialized successfully")
 
+	gameRp := repositories.NewGameDB(db)
 	rdb := redis.InitRedis(cfg)
 
 	var opts []grpc.ServerOption
@@ -58,7 +60,7 @@ func InitServer() {
 	// gRPC server
 	grpcServer := grpc.NewServer(opts...)
 	// GameServer implementation
-	gameServer, err := gs.NewGameServer(ctx, cfg, rdb, gameDB)
+	gameServer, err := gs.NewGameServer(ctx, cfg, rdb, gameRp)
 	if err != nil {
 		log.Fatalf("server error: %s", err.Error())
 	}

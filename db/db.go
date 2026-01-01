@@ -7,17 +7,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type GameDB struct {
-	db *sqlx.DB
-}
-
-func InitializeDb(dbUrl string) (*GameDB, error) {
+func InitializeDb(dbUrl string) (*sqlx.DB, error) {
 	db, err := sqlx.Connect("postgres", dbUrl)
 	if err != nil {
 		return nil, fmt.Errorf("database initialization failed, err:%w", err)
 	}
 
-	return &GameDB{
-		db: db,
-	}, nil
+	return db, nil
 }
