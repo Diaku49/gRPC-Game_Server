@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        v6.33.1
-// source: api/proto/game.proto
+// source: game.proto
 
 package pb
 
@@ -55,11 +55,11 @@ func (x GameStatus) String() string {
 }
 
 func (GameStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_api_proto_game_proto_enumTypes[0].Descriptor()
+	return file_game_proto_enumTypes[0].Descriptor()
 }
 
 func (GameStatus) Type() protoreflect.EnumType {
-	return &file_api_proto_game_proto_enumTypes[0]
+	return &file_game_proto_enumTypes[0]
 }
 
 func (x GameStatus) Number() protoreflect.EnumNumber {
@@ -68,22 +68,25 @@ func (x GameStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use GameStatus.Descriptor instead.
 func (GameStatus) EnumDescriptor() ([]byte, []int) {
-	return file_api_proto_game_proto_rawDescGZIP(), []int{0}
+	return file_game_proto_rawDescGZIP(), []int{0}
 }
 
 type GameRoom struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Players       []*Player              `protobuf:"bytes,2,rep,name=players,proto3" json:"players,omitempty"`
-	Foods         []*Food                `protobuf:"bytes,3,rep,name=foods,proto3" json:"foods,omitempty"`
-	Status        GameStatus             `protobuf:"varint,4,opt,name=status,proto3,enum=game.GameStatus" json:"status,omitempty"`
+	RoundsNum     int32                  `protobuf:"varint,2,opt,name=rounds_num,json=roundsNum,proto3" json:"rounds_num,omitempty"`
+	Status        GameStatus             `protobuf:"varint,3,opt,name=status,proto3,enum=game.GameStatus" json:"status,omitempty"`
+	Rounds        []*Rounds              `protobuf:"bytes,4,rep,name=rounds,proto3" json:"rounds,omitempty"`
+	Player1       *Player                `protobuf:"bytes,5,opt,name=player1,proto3" json:"player1,omitempty"`
+	Player2       *Player                `protobuf:"bytes,6,opt,name=player2,proto3" json:"player2,omitempty"`
+	Foods         []*Food                `protobuf:"bytes,7,rep,name=foods,proto3" json:"foods,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GameRoom) Reset() {
 	*x = GameRoom{}
-	mi := &file_api_proto_game_proto_msgTypes[0]
+	mi := &file_game_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -95,7 +98,7 @@ func (x *GameRoom) String() string {
 func (*GameRoom) ProtoMessage() {}
 
 func (x *GameRoom) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_game_proto_msgTypes[0]
+	mi := &file_game_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -108,7 +111,7 @@ func (x *GameRoom) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GameRoom.ProtoReflect.Descriptor instead.
 func (*GameRoom) Descriptor() ([]byte, []int) {
-	return file_api_proto_game_proto_rawDescGZIP(), []int{0}
+	return file_game_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *GameRoom) GetId() string {
@@ -118,9 +121,37 @@ func (x *GameRoom) GetId() string {
 	return ""
 }
 
-func (x *GameRoom) GetPlayers() []*Player {
+func (x *GameRoom) GetRoundsNum() int32 {
 	if x != nil {
-		return x.Players
+		return x.RoundsNum
+	}
+	return 0
+}
+
+func (x *GameRoom) GetStatus() GameStatus {
+	if x != nil {
+		return x.Status
+	}
+	return GameStatus_WAITING
+}
+
+func (x *GameRoom) GetRounds() []*Rounds {
+	if x != nil {
+		return x.Rounds
+	}
+	return nil
+}
+
+func (x *GameRoom) GetPlayer1() *Player {
+	if x != nil {
+		return x.Player1
+	}
+	return nil
+}
+
+func (x *GameRoom) GetPlayer2() *Player {
+	if x != nil {
+		return x.Player2
 	}
 	return nil
 }
@@ -132,11 +163,56 @@ func (x *GameRoom) GetFoods() []*Food {
 	return nil
 }
 
-func (x *GameRoom) GetStatus() GameStatus {
+type Rounds struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Seq           int32                  `protobuf:"varint,1,opt,name=seq,proto3" json:"seq,omitempty"`
+	PlayerWin     string                 `protobuf:"bytes,2,opt,name=player_win,json=playerWin,proto3" json:"player_win,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Rounds) Reset() {
+	*x = Rounds{}
+	mi := &file_game_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Rounds) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Rounds) ProtoMessage() {}
+
+func (x *Rounds) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[1]
 	if x != nil {
-		return x.Status
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
 	}
-	return GameStatus_WAITING
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Rounds.ProtoReflect.Descriptor instead.
+func (*Rounds) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Rounds) GetSeq() int32 {
+	if x != nil {
+		return x.Seq
+	}
+	return 0
+}
+
+func (x *Rounds) GetPlayerWin() string {
+	if x != nil {
+		return x.PlayerWin
+	}
+	return ""
 }
 
 type Food struct {
@@ -144,13 +220,14 @@ type Food struct {
 	X             int32                  `protobuf:"varint,1,opt,name=x,proto3" json:"x,omitempty"`
 	Y             int32                  `protobuf:"varint,2,opt,name=y,proto3" json:"y,omitempty"`
 	Active        bool                   `protobuf:"varint,3,opt,name=active,proto3" json:"active,omitempty"`
+	Point         int32                  `protobuf:"varint,4,opt,name=point,proto3" json:"point,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Food) Reset() {
 	*x = Food{}
-	mi := &file_api_proto_game_proto_msgTypes[1]
+	mi := &file_game_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -162,7 +239,7 @@ func (x *Food) String() string {
 func (*Food) ProtoMessage() {}
 
 func (x *Food) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_game_proto_msgTypes[1]
+	mi := &file_game_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -175,7 +252,7 @@ func (x *Food) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Food.ProtoReflect.Descriptor instead.
 func (*Food) Descriptor() ([]byte, []int) {
-	return file_api_proto_game_proto_rawDescGZIP(), []int{1}
+	return file_game_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Food) GetX() int32 {
@@ -199,81 +276,101 @@ func (x *Food) GetActive() bool {
 	return false
 }
 
-var File_api_proto_game_proto protoreflect.FileDescriptor
+func (x *Food) GetPoint() int32 {
+	if x != nil {
+		return x.Point
+	}
+	return 0
+}
 
-const file_api_proto_game_proto_rawDesc = "" +
+var File_game_proto protoreflect.FileDescriptor
+
+const file_game_proto_rawDesc = "" +
 	"\n" +
-	"\x14api/proto/game.proto\x12\x04game\x1a\x16api/proto/player.proto\"\x8e\x01\n" +
+	"\n" +
+	"game.proto\x12\x04game\x1a\fplayer.proto\"\xfb\x01\n" +
 	"\bGameRoom\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12&\n" +
-	"\aplayers\x18\x02 \x03(\v2\f.game.PlayerR\aplayers\x12 \n" +
-	"\x05foods\x18\x03 \x03(\v2\n" +
-	".game.FoodR\x05foods\x12(\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x10.game.GameStatusR\x06status\":\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\n" +
+	"rounds_num\x18\x02 \x01(\x05R\troundsNum\x12(\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x10.game.GameStatusR\x06status\x12$\n" +
+	"\x06rounds\x18\x04 \x03(\v2\f.game.RoundsR\x06rounds\x12&\n" +
+	"\aplayer1\x18\x05 \x01(\v2\f.game.PlayerR\aplayer1\x12&\n" +
+	"\aplayer2\x18\x06 \x01(\v2\f.game.PlayerR\aplayer2\x12 \n" +
+	"\x05foods\x18\a \x03(\v2\n" +
+	".game.FoodR\x05foods\"9\n" +
+	"\x06Rounds\x12\x10\n" +
+	"\x03seq\x18\x01 \x01(\x05R\x03seq\x12\x1d\n" +
+	"\n" +
+	"player_win\x18\x02 \x01(\tR\tplayerWin\"P\n" +
 	"\x04Food\x12\f\n" +
 	"\x01x\x18\x01 \x01(\x05R\x01x\x12\f\n" +
 	"\x01y\x18\x02 \x01(\x05R\x01y\x12\x16\n" +
-	"\x06active\x18\x03 \x01(\bR\x06active*3\n" +
+	"\x06active\x18\x03 \x01(\bR\x06active\x12\x14\n" +
+	"\x05point\x18\x04 \x01(\x05R\x05point*3\n" +
 	"\n" +
 	"GameStatus\x12\v\n" +
 	"\aWAITING\x10\x00\x12\n" +
 	"\n" +
 	"\x06ACTIVE\x10\x01\x12\f\n" +
-	"\bFINISHED\x10\x02B(Z&github.com/Diaku49/grpc-game-server/pbb\x06proto3"
+	"\bFINISHED\x10\x02B\x05Z\x03/pbb\x06proto3"
 
 var (
-	file_api_proto_game_proto_rawDescOnce sync.Once
-	file_api_proto_game_proto_rawDescData []byte
+	file_game_proto_rawDescOnce sync.Once
+	file_game_proto_rawDescData []byte
 )
 
-func file_api_proto_game_proto_rawDescGZIP() []byte {
-	file_api_proto_game_proto_rawDescOnce.Do(func() {
-		file_api_proto_game_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_api_proto_game_proto_rawDesc), len(file_api_proto_game_proto_rawDesc)))
+func file_game_proto_rawDescGZIP() []byte {
+	file_game_proto_rawDescOnce.Do(func() {
+		file_game_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_game_proto_rawDesc), len(file_game_proto_rawDesc)))
 	})
-	return file_api_proto_game_proto_rawDescData
+	return file_game_proto_rawDescData
 }
 
-var file_api_proto_game_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_api_proto_game_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_api_proto_game_proto_goTypes = []any{
+var file_game_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_game_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_game_proto_goTypes = []any{
 	(GameStatus)(0),  // 0: game.GameStatus
 	(*GameRoom)(nil), // 1: game.GameRoom
-	(*Food)(nil),     // 2: game.Food
-	(*Player)(nil),   // 3: game.Player
+	(*Rounds)(nil),   // 2: game.Rounds
+	(*Food)(nil),     // 3: game.Food
+	(*Player)(nil),   // 4: game.Player
 }
-var file_api_proto_game_proto_depIdxs = []int32{
-	3, // 0: game.GameRoom.players:type_name -> game.Player
-	2, // 1: game.GameRoom.foods:type_name -> game.Food
-	0, // 2: game.GameRoom.status:type_name -> game.GameStatus
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+var file_game_proto_depIdxs = []int32{
+	0, // 0: game.GameRoom.status:type_name -> game.GameStatus
+	2, // 1: game.GameRoom.rounds:type_name -> game.Rounds
+	4, // 2: game.GameRoom.player1:type_name -> game.Player
+	4, // 3: game.GameRoom.player2:type_name -> game.Player
+	3, // 4: game.GameRoom.foods:type_name -> game.Food
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
-func init() { file_api_proto_game_proto_init() }
-func file_api_proto_game_proto_init() {
-	if File_api_proto_game_proto != nil {
+func init() { file_game_proto_init() }
+func file_game_proto_init() {
+	if File_game_proto != nil {
 		return
 	}
-	file_api_proto_player_proto_init()
+	file_player_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_proto_game_proto_rawDesc), len(file_api_proto_game_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_game_proto_rawDesc), len(file_game_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_api_proto_game_proto_goTypes,
-		DependencyIndexes: file_api_proto_game_proto_depIdxs,
-		EnumInfos:         file_api_proto_game_proto_enumTypes,
-		MessageInfos:      file_api_proto_game_proto_msgTypes,
+		GoTypes:           file_game_proto_goTypes,
+		DependencyIndexes: file_game_proto_depIdxs,
+		EnumInfos:         file_game_proto_enumTypes,
+		MessageInfos:      file_game_proto_msgTypes,
 	}.Build()
-	File_api_proto_game_proto = out.File
-	file_api_proto_game_proto_goTypes = nil
-	file_api_proto_game_proto_depIdxs = nil
+	File_game_proto = out.File
+	file_game_proto_goTypes = nil
+	file_game_proto_depIdxs = nil
 }

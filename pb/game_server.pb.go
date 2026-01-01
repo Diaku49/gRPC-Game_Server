@@ -2,17 +2,16 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        v6.33.1
-// source: api/proto/game_server.proto
+// source: game_server.proto
 
 package pb
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -22,7 +21,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Enum
+// ------------------------------------- Enum
 type Directions int32
 
 const (
@@ -59,11 +58,11 @@ func (x Directions) String() string {
 }
 
 func (Directions) Descriptor() protoreflect.EnumDescriptor {
-	return file_api_proto_game_server_proto_enumTypes[0].Descriptor()
+	return file_game_server_proto_enumTypes[0].Descriptor()
 }
 
 func (Directions) Type() protoreflect.EnumType {
-	return &file_api_proto_game_server_proto_enumTypes[0]
+	return &file_game_server_proto_enumTypes[0]
 }
 
 func (x Directions) Number() protoreflect.EnumNumber {
@@ -72,7 +71,7 @@ func (x Directions) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Directions.Descriptor instead.
 func (Directions) EnumDescriptor() ([]byte, []int) {
-	return file_api_proto_game_server_proto_rawDescGZIP(), []int{0}
+	return file_game_server_proto_rawDescGZIP(), []int{0}
 }
 
 type GameState int32
@@ -108,11 +107,11 @@ func (x GameState) String() string {
 }
 
 func (GameState) Descriptor() protoreflect.EnumDescriptor {
-	return file_api_proto_game_server_proto_enumTypes[1].Descriptor()
+	return file_game_server_proto_enumTypes[1].Descriptor()
 }
 
 func (GameState) Type() protoreflect.EnumType {
-	return &file_api_proto_game_server_proto_enumTypes[1]
+	return &file_game_server_proto_enumTypes[1]
 }
 
 func (x GameState) Number() protoreflect.EnumNumber {
@@ -121,33 +120,33 @@ func (x GameState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use GameState.Descriptor instead.
 func (GameState) EnumDescriptor() ([]byte, []int) {
-	return file_api_proto_game_server_proto_rawDescGZIP(), []int{1}
+	return file_game_server_proto_rawDescGZIP(), []int{1}
 }
 
-// Create
-type CreateUserReq struct {
+// ------------ Lobby --------------
+type GetGameRoomsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	Size          int32                  `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CreateUserReq) Reset() {
-	*x = CreateUserReq{}
-	mi := &file_api_proto_game_server_proto_msgTypes[0]
+func (x *GetGameRoomsReq) Reset() {
+	*x = GetGameRoomsReq{}
+	mi := &file_game_server_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CreateUserReq) String() string {
+func (x *GetGameRoomsReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateUserReq) ProtoMessage() {}
+func (*GetGameRoomsReq) ProtoMessage() {}
 
-func (x *CreateUserReq) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_game_server_proto_msgTypes[0]
+func (x *GetGameRoomsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_game_server_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -158,26 +157,163 @@ func (x *CreateUserReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateUserReq.ProtoReflect.Descriptor instead.
-func (*CreateUserReq) Descriptor() ([]byte, []int) {
-	return file_api_proto_game_server_proto_rawDescGZIP(), []int{0}
+// Deprecated: Use GetGameRoomsReq.ProtoReflect.Descriptor instead.
+func (*GetGameRoomsReq) Descriptor() ([]byte, []int) {
+	return file_game_server_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CreateUserReq) GetName() string {
+func (x *GetGameRoomsReq) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *GetGameRoomsReq) GetSize() int32 {
+	if x != nil {
+		return x.Size
+	}
+	return 0
+}
+
+type GetGameRoomsRes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status        GameStatus             `protobuf:"varint,2,opt,name=status,proto3,enum=game.GameStatus" json:"status,omitempty"`
+	RoundsNum     int32                  `protobuf:"varint,3,opt,name=rounds_num,json=roundsNum,proto3" json:"rounds_num,omitempty"`
+	Player1Name   string                 `protobuf:"bytes,4,opt,name=player1_name,json=player1Name,proto3" json:"player1_name,omitempty"`
+	Player2Name   string                 `protobuf:"bytes,5,opt,name=player2_name,json=player2Name,proto3" json:"player2_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetGameRoomsRes) Reset() {
+	*x = GetGameRoomsRes{}
+	mi := &file_game_server_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetGameRoomsRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetGameRoomsRes) ProtoMessage() {}
+
+func (x *GetGameRoomsRes) ProtoReflect() protoreflect.Message {
+	mi := &file_game_server_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetGameRoomsRes.ProtoReflect.Descriptor instead.
+func (*GetGameRoomsRes) Descriptor() ([]byte, []int) {
+	return file_game_server_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GetGameRoomsRes) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *GetGameRoomsRes) GetStatus() GameStatus {
+	if x != nil {
+		return x.Status
+	}
+	return GameStatus_WAITING
+}
+
+func (x *GetGameRoomsRes) GetRoundsNum() int32 {
+	if x != nil {
+		return x.RoundsNum
+	}
+	return 0
+}
+
+func (x *GetGameRoomsRes) GetPlayer1Name() string {
+	if x != nil {
+		return x.Player1Name
+	}
+	return ""
+}
+
+func (x *GetGameRoomsRes) GetPlayer2Name() string {
+	if x != nil {
+		return x.Player2Name
+	}
+	return ""
+}
+
+// Signup User
+type SignUpUserReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SignUpUserReq) Reset() {
+	*x = SignUpUserReq{}
+	mi := &file_game_server_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SignUpUserReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignUpUserReq) ProtoMessage() {}
+
+func (x *SignUpUserReq) ProtoReflect() protoreflect.Message {
+	mi := &file_game_server_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignUpUserReq.ProtoReflect.Descriptor instead.
+func (*SignUpUserReq) Descriptor() ([]byte, []int) {
+	return file_game_server_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SignUpUserReq) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *CreateUserReq) GetEmail() string {
+func (x *SignUpUserReq) GetEmail() string {
 	if x != nil {
 		return x.Email
 	}
 	return ""
 }
 
-type CreateUserRes struct {
+func (x *SignUpUserReq) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type SignUpUserRes struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
@@ -185,21 +321,21 @@ type CreateUserRes struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CreateUserRes) Reset() {
-	*x = CreateUserRes{}
-	mi := &file_api_proto_game_server_proto_msgTypes[1]
+func (x *SignUpUserRes) Reset() {
+	*x = SignUpUserRes{}
+	mi := &file_game_server_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CreateUserRes) String() string {
+func (x *SignUpUserRes) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateUserRes) ProtoMessage() {}
+func (*SignUpUserRes) ProtoMessage() {}
 
-func (x *CreateUserRes) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_game_server_proto_msgTypes[1]
+func (x *SignUpUserRes) ProtoReflect() protoreflect.Message {
+	mi := &file_game_server_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -210,36 +346,161 @@ func (x *CreateUserRes) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateUserRes.ProtoReflect.Descriptor instead.
-func (*CreateUserRes) Descriptor() ([]byte, []int) {
-	return file_api_proto_game_server_proto_rawDescGZIP(), []int{1}
+// Deprecated: Use SignUpUserRes.ProtoReflect.Descriptor instead.
+func (*SignUpUserRes) Descriptor() ([]byte, []int) {
+	return file_game_server_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CreateUserRes) GetId() string {
+func (x *SignUpUserRes) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *CreateUserRes) GetMessage() string {
+func (x *SignUpUserRes) GetMessage() string {
 	if x != nil {
 		return x.Message
 	}
 	return ""
 }
 
+// Login User
+type LoginUserReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoginUserReq) Reset() {
+	*x = LoginUserReq{}
+	mi := &file_game_server_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoginUserReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoginUserReq) ProtoMessage() {}
+
+func (x *LoginUserReq) ProtoReflect() protoreflect.Message {
+	mi := &file_game_server_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoginUserReq.ProtoReflect.Descriptor instead.
+func (*LoginUserReq) Descriptor() ([]byte, []int) {
+	return file_game_server_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *LoginUserReq) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *LoginUserReq) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type LoginUserRes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	TotalWin      int32                  `protobuf:"varint,3,opt,name=total_win,json=totalWin,proto3" json:"total_win,omitempty"`
+	TotalGames    int32                  `protobuf:"varint,4,opt,name=total_games,json=totalGames,proto3" json:"total_games,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoginUserRes) Reset() {
+	*x = LoginUserRes{}
+	mi := &file_game_server_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoginUserRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoginUserRes) ProtoMessage() {}
+
+func (x *LoginUserRes) ProtoReflect() protoreflect.Message {
+	mi := &file_game_server_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoginUserRes.ProtoReflect.Descriptor instead.
+func (*LoginUserRes) Descriptor() ([]byte, []int) {
+	return file_game_server_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *LoginUserRes) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *LoginUserRes) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *LoginUserRes) GetTotalWin() int32 {
+	if x != nil {
+		return x.TotalWin
+	}
+	return 0
+}
+
+func (x *LoginUserRes) GetTotalGames() int32 {
+	if x != nil {
+		return x.TotalGames
+	}
+	return 0
+}
+
 // Join
 type JoinGameReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	PlayerId      string                 `protobuf:"bytes,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	PlayerName    string                 `protobuf:"bytes,2,opt,name=player_name,json=playerName,proto3" json:"player_name,omitempty"`
+	TotalWin      int32                  `protobuf:"varint,3,opt,name=total_win,json=totalWin,proto3" json:"total_win,omitempty"`
+	TotalGames    int32                  `protobuf:"varint,4,opt,name=total_games,json=totalGames,proto3" json:"total_games,omitempty"`
+	RoomId        string                 `protobuf:"bytes,5,opt,name=room_id,json=roomId,proto3" json:"room_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *JoinGameReq) Reset() {
 	*x = JoinGameReq{}
-	mi := &file_api_proto_game_server_proto_msgTypes[2]
+	mi := &file_game_server_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -251,7 +512,7 @@ func (x *JoinGameReq) String() string {
 func (*JoinGameReq) ProtoMessage() {}
 
 func (x *JoinGameReq) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_game_server_proto_msgTypes[2]
+	mi := &file_game_server_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -264,7 +525,7 @@ func (x *JoinGameReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use JoinGameReq.ProtoReflect.Descriptor instead.
 func (*JoinGameReq) Descriptor() ([]byte, []int) {
-	return file_api_proto_game_server_proto_rawDescGZIP(), []int{2}
+	return file_game_server_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *JoinGameReq) GetPlayerId() string {
@@ -274,16 +535,45 @@ func (x *JoinGameReq) GetPlayerId() string {
 	return ""
 }
 
+func (x *JoinGameReq) GetPlayerName() string {
+	if x != nil {
+		return x.PlayerName
+	}
+	return ""
+}
+
+func (x *JoinGameReq) GetTotalWin() int32 {
+	if x != nil {
+		return x.TotalWin
+	}
+	return 0
+}
+
+func (x *JoinGameReq) GetTotalGames() int32 {
+	if x != nil {
+		return x.TotalGames
+	}
+	return 0
+}
+
+func (x *JoinGameReq) GetRoomId() string {
+	if x != nil {
+		return x.RoomId
+	}
+	return ""
+}
+
 type JoinGameRes struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	GameId        string                 `protobuf:"bytes,1,opt,name=game_id,json=gameId,proto3" json:"game_id,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *JoinGameRes) Reset() {
 	*x = JoinGameRes{}
-	mi := &file_api_proto_game_server_proto_msgTypes[3]
+	mi := &file_game_server_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -295,7 +585,7 @@ func (x *JoinGameRes) String() string {
 func (*JoinGameRes) ProtoMessage() {}
 
 func (x *JoinGameRes) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_game_server_proto_msgTypes[3]
+	mi := &file_game_server_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -308,12 +598,19 @@ func (x *JoinGameRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use JoinGameRes.ProtoReflect.Descriptor instead.
 func (*JoinGameRes) Descriptor() ([]byte, []int) {
-	return file_api_proto_game_server_proto_rawDescGZIP(), []int{3}
+	return file_game_server_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *JoinGameRes) GetGameId() string {
 	if x != nil {
 		return x.GameId
+	}
+	return ""
+}
+
+func (x *JoinGameRes) GetMessage() string {
+	if x != nil {
+		return x.Message
 	}
 	return ""
 }
@@ -328,7 +625,7 @@ type StartGameReq struct {
 
 func (x *StartGameReq) Reset() {
 	*x = StartGameReq{}
-	mi := &file_api_proto_game_server_proto_msgTypes[4]
+	mi := &file_game_server_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -340,7 +637,7 @@ func (x *StartGameReq) String() string {
 func (*StartGameReq) ProtoMessage() {}
 
 func (x *StartGameReq) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_game_server_proto_msgTypes[4]
+	mi := &file_game_server_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -353,7 +650,7 @@ func (x *StartGameReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartGameReq.ProtoReflect.Descriptor instead.
 func (*StartGameReq) Descriptor() ([]byte, []int) {
-	return file_api_proto_game_server_proto_rawDescGZIP(), []int{4}
+	return file_game_server_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *StartGameReq) GetPlayerId() string {
@@ -365,14 +662,14 @@ func (x *StartGameReq) GetPlayerId() string {
 
 type StartGameRes struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	GameInfo      *GameRoom              `protobuf:"bytes,1,opt,name=gameInfo,proto3" json:"gameInfo,omitempty"`
+	GameInfo      *GameRoom              `protobuf:"bytes,1,opt,name=game_info,json=gameInfo,proto3" json:"game_info,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *StartGameRes) Reset() {
 	*x = StartGameRes{}
-	mi := &file_api_proto_game_server_proto_msgTypes[5]
+	mi := &file_game_server_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -384,7 +681,7 @@ func (x *StartGameRes) String() string {
 func (*StartGameRes) ProtoMessage() {}
 
 func (x *StartGameRes) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_game_server_proto_msgTypes[5]
+	mi := &file_game_server_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -397,7 +694,7 @@ func (x *StartGameRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartGameRes.ProtoReflect.Descriptor instead.
 func (*StartGameRes) Descriptor() ([]byte, []int) {
-	return file_api_proto_game_server_proto_rawDescGZIP(), []int{5}
+	return file_game_server_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *StartGameRes) GetGameInfo() *GameRoom {
@@ -418,7 +715,7 @@ type MakeMoveReq struct {
 
 func (x *MakeMoveReq) Reset() {
 	*x = MakeMoveReq{}
-	mi := &file_api_proto_game_server_proto_msgTypes[6]
+	mi := &file_game_server_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -430,7 +727,7 @@ func (x *MakeMoveReq) String() string {
 func (*MakeMoveReq) ProtoMessage() {}
 
 func (x *MakeMoveReq) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_game_server_proto_msgTypes[6]
+	mi := &file_game_server_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -443,7 +740,7 @@ func (x *MakeMoveReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MakeMoveReq.ProtoReflect.Descriptor instead.
 func (*MakeMoveReq) Descriptor() ([]byte, []int) {
-	return file_api_proto_game_server_proto_rawDescGZIP(), []int{6}
+	return file_game_server_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *MakeMoveReq) GetPlayerId() string {
@@ -468,7 +765,7 @@ type MakeMoveRes struct {
 
 func (x *MakeMoveRes) Reset() {
 	*x = MakeMoveRes{}
-	mi := &file_api_proto_game_server_proto_msgTypes[7]
+	mi := &file_game_server_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -480,7 +777,7 @@ func (x *MakeMoveRes) String() string {
 func (*MakeMoveRes) ProtoMessage() {}
 
 func (x *MakeMoveRes) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_game_server_proto_msgTypes[7]
+	mi := &file_game_server_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -493,28 +790,56 @@ func (x *MakeMoveRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MakeMoveRes.ProtoReflect.Descriptor instead.
 func (*MakeMoveRes) Descriptor() ([]byte, []int) {
-	return file_api_proto_game_server_proto_rawDescGZIP(), []int{7}
+	return file_game_server_proto_rawDescGZIP(), []int{11}
 }
 
-var File_api_proto_game_server_proto protoreflect.FileDescriptor
+var File_game_server_proto protoreflect.FileDescriptor
 
-const file_api_proto_game_server_proto_rawDesc = "" +
+const file_game_server_proto_rawDesc = "" +
 	"\n" +
-	"\x1bapi/proto/game_server.proto\x12\x04game\x1a\x14api/proto/game.proto\"9\n" +
-	"\rCreateUserReq\x12\x12\n" +
+	"\x11game_server.proto\x12\x04game\x1a\n" +
+	"game.proto\"9\n" +
+	"\x0fGetGameRoomsReq\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x12\n" +
+	"\x04size\x18\x02 \x01(\x05R\x04size\"\xb0\x01\n" +
+	"\x0fGetGameRoomsRes\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12(\n" +
+	"\x06status\x18\x02 \x01(\x0e2\x10.game.GameStatusR\x06status\x12\x1d\n" +
+	"\n" +
+	"rounds_num\x18\x03 \x01(\x05R\troundsNum\x12!\n" +
+	"\fplayer1_name\x18\x04 \x01(\tR\vplayer1Name\x12!\n" +
+	"\fplayer2_name\x18\x05 \x01(\tR\vplayer2Name\"U\n" +
+	"\rSignUpUserReq\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
-	"\x05email\x18\x02 \x01(\tR\x05email\"9\n" +
-	"\rCreateUserRes\x12\x0e\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
+	"\bpassword\x18\x03 \x01(\tR\bpassword\"9\n" +
+	"\rSignUpUserRes\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"*\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"@\n" +
+	"\fLoginUserReq\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"p\n" +
+	"\fLoginUserRes\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1b\n" +
+	"\ttotal_win\x18\x03 \x01(\x05R\btotalWin\x12\x1f\n" +
+	"\vtotal_games\x18\x04 \x01(\x05R\n" +
+	"totalGames\"\xa2\x01\n" +
 	"\vJoinGameReq\x12\x1b\n" +
-	"\tplayer_id\x18\x01 \x01(\tR\bplayerId\"&\n" +
+	"\tplayer_id\x18\x01 \x01(\tR\bplayerId\x12\x1f\n" +
+	"\vplayer_name\x18\x02 \x01(\tR\n" +
+	"playerName\x12\x1b\n" +
+	"\ttotal_win\x18\x03 \x01(\x05R\btotalWin\x12\x1f\n" +
+	"\vtotal_games\x18\x04 \x01(\x05R\n" +
+	"totalGames\x12\x17\n" +
+	"\aroom_id\x18\x05 \x01(\tR\x06roomId\"@\n" +
 	"\vJoinGameRes\x12\x17\n" +
-	"\agame_id\x18\x01 \x01(\tR\x06gameId\"+\n" +
+	"\agame_id\x18\x01 \x01(\tR\x06gameId\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"+\n" +
 	"\fStartGameReq\x12\x1b\n" +
-	"\tplayer_id\x18\x01 \x01(\tR\bplayerId\":\n" +
-	"\fStartGameRes\x12*\n" +
-	"\bgameInfo\x18\x01 \x01(\v2\x0e.game.GameRoomR\bgameInfo\"Z\n" +
+	"\tplayer_id\x18\x01 \x01(\tR\bplayerId\";\n" +
+	"\fStartGameRes\x12+\n" +
+	"\tgame_info\x18\x01 \x01(\v2\x0e.game.GameRoomR\bgameInfo\"Z\n" +
 	"\vMakeMoveReq\x12\x1b\n" +
 	"\tplayer_id\x18\x01 \x01(\tR\bplayerId\x12.\n" +
 	"\tdirection\x18\x02 \x01(\x0e2\x10.game.DirectionsR\tdirection\"\r\n" +
@@ -528,82 +853,94 @@ const file_api_proto_game_server_proto_rawDesc = "" +
 	"\tGameState\x12\x1d\n" +
 	"\x19WAITING_FOR_OTHER_PLAYERS\x10\x00\x12\v\n" +
 	"\aSTARTED\x10\x01\x12\t\n" +
-	"\x05ENDED\x10\x022\xdf\x01\n" +
+	"\x05ENDED\x10\x022\xd2\x02\n" +
 	"\n" +
-	"GameServer\x126\n" +
+	"GameServer\x12<\n" +
+	"\fGetGameRooms\x12\x15.game.GetGameRoomsReq\x1a\x15.game.GetGameRoomsRes\x126\n" +
 	"\n" +
-	"CreateUser\x12\x13.game.CreateUserReq\x1a\x13.game.CreateUserRes\x120\n" +
+	"SignUpUser\x12\x13.game.SignUpUserReq\x1a\x13.game.SignUpUserRes\x123\n" +
+	"\tLoginUser\x12\x12.game.LoginUserReq\x1a\x12.game.LoginUserRes\x120\n" +
 	"\bJoinGame\x12\x11.game.JoinGameReq\x1a\x11.game.JoinGameRes\x125\n" +
 	"\tStartGame\x12\x12.game.StartGameReq\x1a\x12.game.StartGameRes0\x01\x120\n" +
-	"\bMakeMove\x12\x11.game.MakeMoveReq\x1a\x11.game.MakeMoveResB(Z&github.com/Diaku49/grpc-game-server/pbb\x06proto3"
+	"\bMakeMove\x12\x11.game.MakeMoveReq\x1a\x11.game.MakeMoveResB\x05Z\x03/pbb\x06proto3"
 
 var (
-	file_api_proto_game_server_proto_rawDescOnce sync.Once
-	file_api_proto_game_server_proto_rawDescData []byte
+	file_game_server_proto_rawDescOnce sync.Once
+	file_game_server_proto_rawDescData []byte
 )
 
-func file_api_proto_game_server_proto_rawDescGZIP() []byte {
-	file_api_proto_game_server_proto_rawDescOnce.Do(func() {
-		file_api_proto_game_server_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_api_proto_game_server_proto_rawDesc), len(file_api_proto_game_server_proto_rawDesc)))
+func file_game_server_proto_rawDescGZIP() []byte {
+	file_game_server_proto_rawDescOnce.Do(func() {
+		file_game_server_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_game_server_proto_rawDesc), len(file_game_server_proto_rawDesc)))
 	})
-	return file_api_proto_game_server_proto_rawDescData
+	return file_game_server_proto_rawDescData
 }
 
-var file_api_proto_game_server_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_api_proto_game_server_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
-var file_api_proto_game_server_proto_goTypes = []any{
-	(Directions)(0),       // 0: game.Directions
-	(GameState)(0),        // 1: game.GameState
-	(*CreateUserReq)(nil), // 2: game.CreateUserReq
-	(*CreateUserRes)(nil), // 3: game.CreateUserRes
-	(*JoinGameReq)(nil),   // 4: game.JoinGameReq
-	(*JoinGameRes)(nil),   // 5: game.JoinGameRes
-	(*StartGameReq)(nil),  // 6: game.StartGameReq
-	(*StartGameRes)(nil),  // 7: game.StartGameRes
-	(*MakeMoveReq)(nil),   // 8: game.MakeMoveReq
-	(*MakeMoveRes)(nil),   // 9: game.MakeMoveRes
-	(*GameRoom)(nil),      // 10: game.GameRoom
+var file_game_server_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_game_server_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_game_server_proto_goTypes = []any{
+	(Directions)(0),         // 0: game.Directions
+	(GameState)(0),          // 1: game.GameState
+	(*GetGameRoomsReq)(nil), // 2: game.GetGameRoomsReq
+	(*GetGameRoomsRes)(nil), // 3: game.GetGameRoomsRes
+	(*SignUpUserReq)(nil),   // 4: game.SignUpUserReq
+	(*SignUpUserRes)(nil),   // 5: game.SignUpUserRes
+	(*LoginUserReq)(nil),    // 6: game.LoginUserReq
+	(*LoginUserRes)(nil),    // 7: game.LoginUserRes
+	(*JoinGameReq)(nil),     // 8: game.JoinGameReq
+	(*JoinGameRes)(nil),     // 9: game.JoinGameRes
+	(*StartGameReq)(nil),    // 10: game.StartGameReq
+	(*StartGameRes)(nil),    // 11: game.StartGameRes
+	(*MakeMoveReq)(nil),     // 12: game.MakeMoveReq
+	(*MakeMoveRes)(nil),     // 13: game.MakeMoveRes
+	(GameStatus)(0),         // 14: game.GameStatus
+	(*GameRoom)(nil),        // 15: game.GameRoom
 }
-var file_api_proto_game_server_proto_depIdxs = []int32{
-	10, // 0: game.StartGameRes.gameInfo:type_name -> game.GameRoom
-	0,  // 1: game.MakeMoveReq.direction:type_name -> game.Directions
-	2,  // 2: game.GameServer.CreateUser:input_type -> game.CreateUserReq
-	4,  // 3: game.GameServer.JoinGame:input_type -> game.JoinGameReq
-	6,  // 4: game.GameServer.StartGame:input_type -> game.StartGameReq
-	8,  // 5: game.GameServer.MakeMove:input_type -> game.MakeMoveReq
-	3,  // 6: game.GameServer.CreateUser:output_type -> game.CreateUserRes
-	5,  // 7: game.GameServer.JoinGame:output_type -> game.JoinGameRes
-	7,  // 8: game.GameServer.StartGame:output_type -> game.StartGameRes
-	9,  // 9: game.GameServer.MakeMove:output_type -> game.MakeMoveRes
-	6,  // [6:10] is the sub-list for method output_type
-	2,  // [2:6] is the sub-list for method input_type
-	2,  // [2:2] is the sub-list for extension type_name
-	2,  // [2:2] is the sub-list for extension extendee
-	0,  // [0:2] is the sub-list for field type_name
+var file_game_server_proto_depIdxs = []int32{
+	14, // 0: game.GetGameRoomsRes.status:type_name -> game.GameStatus
+	15, // 1: game.StartGameRes.game_info:type_name -> game.GameRoom
+	0,  // 2: game.MakeMoveReq.direction:type_name -> game.Directions
+	2,  // 3: game.GameServer.GetGameRooms:input_type -> game.GetGameRoomsReq
+	4,  // 4: game.GameServer.SignUpUser:input_type -> game.SignUpUserReq
+	6,  // 5: game.GameServer.LoginUser:input_type -> game.LoginUserReq
+	8,  // 6: game.GameServer.JoinGame:input_type -> game.JoinGameReq
+	10, // 7: game.GameServer.StartGame:input_type -> game.StartGameReq
+	12, // 8: game.GameServer.MakeMove:input_type -> game.MakeMoveReq
+	3,  // 9: game.GameServer.GetGameRooms:output_type -> game.GetGameRoomsRes
+	5,  // 10: game.GameServer.SignUpUser:output_type -> game.SignUpUserRes
+	7,  // 11: game.GameServer.LoginUser:output_type -> game.LoginUserRes
+	9,  // 12: game.GameServer.JoinGame:output_type -> game.JoinGameRes
+	11, // 13: game.GameServer.StartGame:output_type -> game.StartGameRes
+	13, // 14: game.GameServer.MakeMove:output_type -> game.MakeMoveRes
+	9,  // [9:15] is the sub-list for method output_type
+	3,  // [3:9] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
-func init() { file_api_proto_game_server_proto_init() }
-func file_api_proto_game_server_proto_init() {
-	if File_api_proto_game_server_proto != nil {
+func init() { file_game_server_proto_init() }
+func file_game_server_proto_init() {
+	if File_game_server_proto != nil {
 		return
 	}
-	file_api_proto_game_proto_init()
+	file_game_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_proto_game_server_proto_rawDesc), len(file_api_proto_game_server_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_game_server_proto_rawDesc), len(file_game_server_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   8,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_api_proto_game_server_proto_goTypes,
-		DependencyIndexes: file_api_proto_game_server_proto_depIdxs,
-		EnumInfos:         file_api_proto_game_server_proto_enumTypes,
-		MessageInfos:      file_api_proto_game_server_proto_msgTypes,
+		GoTypes:           file_game_server_proto_goTypes,
+		DependencyIndexes: file_game_server_proto_depIdxs,
+		EnumInfos:         file_game_server_proto_enumTypes,
+		MessageInfos:      file_game_server_proto_msgTypes,
 	}.Build()
-	File_api_proto_game_server_proto = out.File
-	file_api_proto_game_server_proto_goTypes = nil
-	file_api_proto_game_server_proto_depIdxs = nil
+	File_game_server_proto = out.File
+	file_game_server_proto_goTypes = nil
+	file_game_server_proto_depIdxs = nil
 }

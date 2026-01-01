@@ -1,13 +1,13 @@
-package client
+package main
 
 import (
 	"fmt"
 
-	Config "github.com/Diaku49/grpc-game-server/internal/config"
+	"github.com/Diaku49/grpc-game-server/config"
 )
 
 func InitClient() {
-	config, err := Config.LoadConfig()
+	config, err := config.LoadConfig()
 	if err != nil {
 		panic("Retrieving config failed")
 	}

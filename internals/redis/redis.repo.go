@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	config "github.com/Diaku49/grpc-game-server/internal/config"
+	"github.com/Diaku49/grpc-game-server/config"
 	"github.com/google/uuid"
 
 	"github.com/redis/go-redis/v9"

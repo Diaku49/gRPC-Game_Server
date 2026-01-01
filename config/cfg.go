@@ -9,6 +9,8 @@ import (
 type Config struct {
 	//Server
 	Port string `envconfig:"PORT" default:"3000"`
+	//DB
+	DbUrl string `envconfig:"DB_URL" default:"postgres://postgres:postgres@localhost:5432/postgres"`
 	//Redis
 	RedisAddr string `envconfig:"REDIS_ADDR" default:"localhost:6379"`
 	RedisPass string `envconfig:"REDIS_PASS" default:""`

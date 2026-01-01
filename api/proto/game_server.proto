@@ -2,20 +2,101 @@ syntax = "proto3";
 
 package game;
 
-option go_package = "github.com/Diaku49/grpc-game-server/pb";
+option go_package = "/pb";
 
-import "api/proto/game.proto";
+import "game.proto";
 
+// the whole game server and its functionality
 service GameServer {
-    // Player Setup
-    rpc CreateUser(CreateUserReq) returns (CreateUserRes);
+    //-------------- Lobby
+    // Listing game rooms
+    rpc GetGameRooms(GetGameRoomsReq) returns (GetGameRoomsRes);
+    // Signup api
+    rpc SignUpUser(SignUpUserReq) returns (SignUpUserRes);
+    // Login api
+    rpc LoginUser(LoginUserReq) returns (LoginUserRes);
+    //-------------- Game
+    // Join game
     rpc JoinGame(JoinGameReq) returns (JoinGameRes);
-    // Gameplay
+    // Starting game
     rpc StartGame(StartGameReq) returns (stream StartGameRes);
+    // Make move
     rpc MakeMove(MakeMoveReq) returns (MakeMoveRes);
 }
 
-// Enum
+//------------ Lobby --------------
+message GetGameRoomsReq {
+    int32 page = 1;
+    int32 size = 2;
+}
+message GetGameRoomsRes {
+    string id = 1;
+    GameStatus status = 2;
+    int32 rounds_num = 3;
+    string player1_name = 4;
+    string player2_name = 5;
+
+}
+
+//------------ Player --------------
+
+// Signup User
+message SignUpUserReq {
+   string name = 1;
+   string email = 2;
+   string password = 3;
+};
+
+message SignUpUserRes {
+    string id = 1;
+    string message = 2;
+}
+
+// Login User
+message LoginUserReq {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginUserRes {
+    string id = 1;
+    string name = 2;
+    int32 total_win = 3;
+    int32 total_games = 4;
+}
+
+// Join
+message JoinGameReq {
+    string player_id = 1;
+    string player_name = 2;
+    int32 total_win = 3;
+    int32 total_games = 4;
+    string room_id = 5;
+}
+message JoinGameRes {
+   string game_id = 1;
+   string message = 2;
+}
+
+//------------- Gameplay ------------
+
+// Start Game
+message StartGameReq {
+   string player_id = 1;
+}
+message StartGameRes {
+    GameRoom game_info = 1;
+}
+
+// Make Move
+message MakeMoveReq {
+    string player_id = 1;
+    Directions direction = 2;
+}
+
+message MakeMoveRes {}
+
+//------------------------------------- Enum
 enum Directions {
     UP = 0;
     DOWN = 1;
@@ -28,48 +109,5 @@ enum GameState {
     STARTED = 1;
     ENDED = 2;
 }
-
-//------------ Player --------------
-
-// Create
-message CreateUserReq {
-   string name = 1;
-   string email = 2;
-};
-
-message CreateUserRes {
-    string id = 1;
-    string message = 2;
-}
-
-// Matchmaking
-
-// Join
-message JoinGameReq {
-    string player_id = 1;
-}
-
-message JoinGameRes {
-   string game_id = 1;
-}
-
-//------------- Gameplay ------------
-
-// Start Game
-message StartGameReq {
-   string player_id = 1;
-}
-
-message StartGameRes {
-    GameRoom gameInfo = 1;
-}
-
-// Make Move
-message MakeMoveReq {
-    string player_id = 1;
-    Directions direction = 2;
-}
-
-message MakeMoveRes {}
 
 //------------- Cleanup ----------------

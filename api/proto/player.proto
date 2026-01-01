@@ -2,14 +2,15 @@ syntax = "proto3";
 
 package game;
 
-option go_package = "github.com/Diaku49/grpc-game-server/pb";
+option go_package = "/pb";
 
 message Player {
     string id = 1;
     string name = 2;
     int32 point = 3;
     int32 deaths = 4;
-    Position position = 5;
+    int32 win = 5;
+    Position position = 6;
 }
 
 message Position {

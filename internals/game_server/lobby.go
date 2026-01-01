@@ -4,45 +4,23 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Diaku49/grpc-game-server/internal/config"
-	"github.com/Diaku49/grpc-game-server/internal/redis"
+	"github.com/Diaku49/grpc-game-server/internals/redis"
 	"github.com/Diaku49/grpc-game-server/pb"
 	"google.golang.org/grpc"
 )
 
-type GameServer struct {
-	pb.UnimplementedGameServerServer
-	cfg       *config.Config
-	rdb       *redis.RedisClient
-	gameRooms map[string][2]string
-}
-
-func NewGameServer(config *config.Config, rdb *redis.RedisClient) (*GameServer, error) {
-	ctx := context.Background()
-	gameRooms, err := rdb.GetGameRooms(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to load game rooms from Redis at startup: %w", err)
-	}
-
-	return &GameServer{
-		cfg:       config,
-		rdb:       rdb,
-		gameRooms: gameRooms,
-	}, nil
-}
-
-func (gs *GameServer) CreateUser(ctx context.Context, req *pb.CreateUserReq) (*pb.CreateUserRes, error) {
+func (gs *GameServer) SignUpUser(ctx context.Context, req *pb.SignUpUserReq) (*pb.SignUpUserRes, error) {
 	user := redis.CreateUserDTO{
 		Email: req.GetEmail(),
 		Name:  req.GetName(),
 	}
 	id, err := gs.rdb.SetUser(ctx, user)
 	if err != nil {
-		return &pb.CreateUserRes{}, fmt.Errorf("couldnt create user, error:%v", err)
+		return &pb.SignUpUserRes{}, fmt.Errorf("couldnt create user, error:%v", err)
 	}
 
 	message := "User created successfully."
-	return &pb.CreateUserRes{Id: id, Message: message}, nil
+	return &pb.SignUpUserRes{Id: id, Message: message}, nil
 }
 
 func (gs *GameServer) JoinGame(ctx context.Context, req *pb.JoinGameReq) (*pb.JoinGameRes, error) {
