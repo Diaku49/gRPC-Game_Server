@@ -25,7 +25,7 @@ CREATE INDEX IF NOT EXISTS idx_games_status ON games(status);
 
 -- enum
 CREATE TYPE GAME_STATUS AS ENUM (
-    'started'
+    'open'
     'finished'
     'in_progress'
     'cancelled'

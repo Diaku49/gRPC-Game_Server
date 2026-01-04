@@ -3,73 +3,71 @@ package game_server
 import (
 	"context"
 
+	"github.com/Diaku49/grpc-game-server/internal/repositories/models"
 	"github.com/Diaku49/grpc-game-server/pb"
-	"google.golang.org/grpc"
+	"github.com/Diaku49/grpc-game-server/pkg"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (gs *GameServer) SignUpUser(ctx context.Context, req *pb.SignUpUserReq) (*pb.SignUpUserRes, error) {
+	hashPass, err := pkg.Hash(req.Password)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	user := &models.User{
+		Name:     req.Name,
+		Email:    req.Email,
+		Password: hashPass,
+	}
 
-	return nil, nil
+	// I could use Transaction but i didnt :)
+	// User Exists
+	id, err := gs.db.FindUserIdByEmail(ctx, req.Email)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	if id != "" {
+		return nil, status.Error(codes.AlreadyExists, "User with this email already exist")
+	}
+
+	// Creating User
+	err = gs.db.CreateUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.SignUpUserRes{
+		Message: "Signed up successfully.",
+	}, nil
 }
 
 func (gs *GameServer) LoginUser(ctx context.Context, req *pb.LoginUserReq) (*pb.LoginUserRes, error) {
+	user, err := gs.db.FindUserByEmail(ctx, req.Email)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
 
-	return nil, nil
+	if isValidPass := pkg.Compare(user.Password, req.Password); isValidPass == false {
+		return nil, status.Error(codes.Internal, "Password not correct.")
+	}
+
+	return &pb.LoginUserRes{
+		Id:         user.Id,
+		Name:       user.Name,
+		TotalWin:   user.Total_win,
+		TotalGames: user.Total_games,
+	}, nil
 }
 
-func (gs *GameServer) JoinGame(ctx context.Context, req *pb.JoinGameReq) (*pb.JoinGameRes, error) {
-	// playerId := req.GetPlayerId()
-	// // freeRoom, err := gs.findRoom(playerId)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("faild finding game room, error:%v", err)
-	// }
+func (gs *GameServer) GetGameRooms(ctx context.Context, req *pb.GetGameRoomsReq) (*pb.GetGameRoomsRes, error) {
+	gameRooms, err := gs.db.ListGameRooms(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	GameRooms := models.MapToPBGetGameRoomsRes(gameRooms)
 
-	// if freeRoom != "" {
-	// 	players, exists := gs.gameRooms[freeRoom]
-	// 	if !exists {
-	// 		return nil, fmt.Errorf("room %s not found", freeRoom)
-	// 	}
-	// 	if players[0] == "" {
-	// 		players[0] = playerId
-	// 	} else {
-	// 		players[1] = playerId
-	// 	}
-	// 	gs.gameRooms[freeRoom] = players
-	// }
-
-	// creating a game room
-
-	// update redis
-
-	return nil, nil
+	return &pb.GetGameRoomsRes{
+		GameRooms: GameRooms,
+	}, nil
 }
-
-func (gs *GameServer) StartGame(req *pb.StartGameReq, stream grpc.ServerStreamingServer[pb.StartGameRes]) error {
-
-	return nil
-}
-
-func (gs *GameServer) MakeMove(ctx context.Context, req *pb.MakeMoveReq) (*pb.MakeMoveRes, error) {
-
-	return nil, nil
-}
-
-// func (gs *GameServer) findRoom(id string) (string, error) {
-// 	var roomIds []string
-// 	// for key, players := range gs.gameRooms {
-// 	// 	for _, pid := range players {
-// 	// 		if pid == id {
-// 	// 			return "", fmt.Errorf("this plater already joined a game room")
-// 	// 		}
-// 	// 	}
-// 	// 	if len(players) < 2 {
-// 	// 		roomIds = append(roomIds, key)
-// 	// 	}
-// 	// }
-
-// 	if roomIds[0] == "" {
-// 		return "", nil
-// 	}
-
-// 	return roomIds[0], nil
-// }

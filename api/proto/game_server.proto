@@ -11,6 +11,8 @@ service GameServer {
     //-------------- Lobby
     // Listing game rooms
     rpc GetGameRooms(GetGameRoomsReq) returns (GetGameRoomsRes);
+    // Create game room
+    rpc CreateGameRoom(CreateGameRoomReq) returns (CreateGameRoomRes);
     // Signup api
     rpc SignUpUser(SignUpUserReq) returns (SignUpUserRes);
     // Login api
@@ -30,12 +32,24 @@ message GetGameRoomsReq {
     int32 size = 2;
 }
 message GetGameRoomsRes {
+    repeated GameRooms game_rooms = 1;
+}
+
+message GameRooms {
     string id = 1;
-    GameStatus status = 2;
+    string status = 2;
     int32 rounds_num = 3;
     string player1_name = 4;
     string player2_name = 5;
+}
 
+message CreateGameRoomReq {
+    string user_id = 1;
+}
+
+message CreateGameRoomRes {
+    string message = 1;
+    string game_id = 2;
 }
 
 //------------ Player --------------
@@ -48,8 +62,7 @@ message SignUpUserReq {
 };
 
 message SignUpUserRes {
-    string id = 1;
-    string message = 2;
+    string message = 1;
 }
 
 // Login User
@@ -102,12 +115,6 @@ enum Directions {
     DOWN = 1;
     RIGHT = 2;
     LEFT = 3;
-}
-
-enum GameState {
-    WAITING_FOR_OTHER_PLAYERS = 0;
-    STARTED = 1;
-    ENDED = 2;
 }
 
 //------------- Cleanup ----------------

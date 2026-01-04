@@ -7,16 +7,10 @@ option go_package = "/pb";
 import "player.proto";
 
 // Game
-enum GameStatus {
-    WAITING = 0;
-    ACTIVE = 1;
-    FINISHED = 2;
-}
-
 message GameRoom {
     string id = 1;
     int32 rounds_num = 2;
-    GameStatus status = 3;
+    string status = 3;
     repeated Rounds rounds = 4;
     Player player1 = 5;
     Player player2 = 6;
