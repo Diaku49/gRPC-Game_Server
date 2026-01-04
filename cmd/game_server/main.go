@@ -14,6 +14,7 @@ import (
 	"github.com/Diaku49/grpc-game-server/config"
 	"github.com/Diaku49/grpc-game-server/db"
 	gs "github.com/Diaku49/grpc-game-server/internal/game_server"
+	"github.com/Diaku49/grpc-game-server/internal/interceptors"
 	"github.com/Diaku49/grpc-game-server/internal/redis"
 	"github.com/Diaku49/grpc-game-server/internal/repositories"
 	"github.com/Diaku49/grpc-game-server/pb"
@@ -21,10 +22,16 @@ import (
 )
 
 func main() {
-	InitServer()
+	// Getting config
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Retrieving config failed error: %v", err)
+	}
+
+	InitServer(cfg)
 }
 
-func InitServer() {
+func InitServer(cfg *config.Config) {
 	// Shutdown setup
 	errCh := make(chan error, 1)
 	ctx, stop := signal.NotifyContext(
@@ -33,12 +40,6 @@ func InitServer() {
 		syscall.SIGTERM,
 	)
 	defer stop()
-
-	// Getting config
-	cfg, err := config.LoadConfig()
-	if err != nil {
-		log.Fatalf("Retrieving config failed error: %v", err)
-	}
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", cfg.Port))
 	if err != nil {
@@ -55,9 +56,12 @@ func InitServer() {
 	gameRp := repositories.NewGameDB(db)
 	rdb := redis.InitRedis(cfg)
 
+	//------------------- gRPC server
 	var opts []grpc.ServerOption
+	opts = []grpc.ServerOption{
+		grpc.UnaryInterceptor(interceptors.RegisterAuthInterceptor(cfg.JwtSecret)),
+	}
 
-	// gRPC server
 	grpcServer := grpc.NewServer(opts...)
 	// GameServer implementation
 	gameServer, err := gs.NewGameServer(ctx, cfg, rdb, gameRp)

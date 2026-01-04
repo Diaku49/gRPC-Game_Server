@@ -8,7 +8,8 @@ import (
 
 type Config struct {
 	//Server
-	Port string `envconfig:"PORT" default:"3000"`
+	Port      string `envconfig:"PORT" default:"3000"`
+	JwtSecret string `envconfig:"JWT_SECRET" default:"somethingeasy"`
 	//DB
 	DbUrl string `envconfig:"DB_URL" default:"postgres://postgres:postgres@localhost:5432/postgres"`
 	//Redis

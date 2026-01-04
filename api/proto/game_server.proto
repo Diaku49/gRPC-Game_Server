@@ -12,9 +12,11 @@ service GameServer {
     // Listing game rooms
     rpc GetGameRooms(GetGameRoomsReq) returns (GetGameRoomsRes);
     // Create game room
-    rpc CreateGameRoom(CreateGameRoomReq) returns (CreateGameRoomRes);
+    rpc CreateGameRoom(CreateGameRoomReq) returns (Message);
+    // Close game room
+    rpc CloseGameRoom(CloseGameRoomReq) returns (Message);
     // Signup api
-    rpc SignUpUser(SignUpUserReq) returns (SignUpUserRes);
+    rpc SignUpUser(SignUpUserReq) returns (Message);
     // Login api
     rpc LoginUser(LoginUserReq) returns (LoginUserRes);
     //-------------- Game
@@ -27,6 +29,26 @@ service GameServer {
 }
 
 //------------ Lobby --------------
+// Signup User
+message SignUpUserReq {
+   string name = 1;
+   string email = 2;
+   string password = 3;
+};
+
+// Login User
+message LoginUserReq {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginUserRes {
+    string id = 1;
+    string name = 2;
+    int32 total_win = 3;
+    int32 total_games = 4;
+}
+
 message GetGameRoomsReq {
     int32 page = 1;
     int32 size = 2;
@@ -43,40 +65,17 @@ message GameRooms {
     string player2_name = 5;
 }
 
+//----------- Game -----------
+// Create game
 message CreateGameRoomReq {
     string user_id = 1;
 }
-
-message CreateGameRoomRes {
-    string message = 1;
-    string game_id = 2;
+// Close game
+message CloseGameRoomReq {
+    string game_id =1;
 }
 
-//------------ Player --------------
-
-// Signup User
-message SignUpUserReq {
-   string name = 1;
-   string email = 2;
-   string password = 3;
-};
-
-message SignUpUserRes {
-    string message = 1;
-}
-
-// Login User
-message LoginUserReq {
-    string email = 1;
-    string password = 2;
-}
-
-message LoginUserRes {
-    string id = 1;
-    string name = 2;
-    int32 total_win = 3;
-    int32 total_games = 4;
-}
+//------------- Gameplay ------------
 
 // Join
 message JoinGameReq {
@@ -90,8 +89,6 @@ message JoinGameRes {
    string game_id = 1;
    string message = 2;
 }
-
-//------------- Gameplay ------------
 
 // Start Game
 message StartGameReq {
@@ -109,7 +106,13 @@ message MakeMoveReq {
 
 message MakeMoveRes {}
 
-//------------------------------------- Enum
+//----------- Common ----------------
+message Message {
+    string id = 1;
+    string message = 2;
+}
+
+//--------------- Enum -----------------
 enum Directions {
     UP = 0;
     DOWN = 1;

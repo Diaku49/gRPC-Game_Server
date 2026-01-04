@@ -19,12 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GameServer_GetGameRooms_FullMethodName = "/game.GameServer/GetGameRooms"
-	GameServer_SignUpUser_FullMethodName   = "/game.GameServer/SignUpUser"
-	GameServer_LoginUser_FullMethodName    = "/game.GameServer/LoginUser"
-	GameServer_JoinGame_FullMethodName     = "/game.GameServer/JoinGame"
-	GameServer_StartGame_FullMethodName    = "/game.GameServer/StartGame"
-	GameServer_MakeMove_FullMethodName     = "/game.GameServer/MakeMove"
+	GameServer_GetGameRooms_FullMethodName   = "/game.GameServer/GetGameRooms"
+	GameServer_CreateGameRoom_FullMethodName = "/game.GameServer/CreateGameRoom"
+	GameServer_CloseGameRoom_FullMethodName  = "/game.GameServer/CloseGameRoom"
+	GameServer_SignUpUser_FullMethodName     = "/game.GameServer/SignUpUser"
+	GameServer_LoginUser_FullMethodName      = "/game.GameServer/LoginUser"
+	GameServer_JoinGame_FullMethodName       = "/game.GameServer/JoinGame"
+	GameServer_StartGame_FullMethodName      = "/game.GameServer/StartGame"
+	GameServer_MakeMove_FullMethodName       = "/game.GameServer/MakeMove"
 )
 
 // GameServerClient is the client API for GameServer service.
@@ -36,8 +38,12 @@ type GameServerClient interface {
 	// -------------- Lobby
 	// Listing game rooms
 	GetGameRooms(ctx context.Context, in *GetGameRoomsReq, opts ...grpc.CallOption) (*GetGameRoomsRes, error)
+	// Create game room
+	CreateGameRoom(ctx context.Context, in *CreateGameRoomReq, opts ...grpc.CallOption) (*Message, error)
+	// Close game room
+	CloseGameRoom(ctx context.Context, in *CloseGameRoomReq, opts ...grpc.CallOption) (*Message, error)
 	// Signup api
-	SignUpUser(ctx context.Context, in *SignUpUserReq, opts ...grpc.CallOption) (*SignUpUserRes, error)
+	SignUpUser(ctx context.Context, in *SignUpUserReq, opts ...grpc.CallOption) (*Message, error)
 	// Login api
 	LoginUser(ctx context.Context, in *LoginUserReq, opts ...grpc.CallOption) (*LoginUserRes, error)
 	// -------------- Game
@@ -67,9 +73,29 @@ func (c *gameServerClient) GetGameRooms(ctx context.Context, in *GetGameRoomsReq
 	return out, nil
 }
 
-func (c *gameServerClient) SignUpUser(ctx context.Context, in *SignUpUserReq, opts ...grpc.CallOption) (*SignUpUserRes, error) {
+func (c *gameServerClient) CreateGameRoom(ctx context.Context, in *CreateGameRoomReq, opts ...grpc.CallOption) (*Message, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SignUpUserRes)
+	out := new(Message)
+	err := c.cc.Invoke(ctx, GameServer_CreateGameRoom_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gameServerClient) CloseGameRoom(ctx context.Context, in *CloseGameRoomReq, opts ...grpc.CallOption) (*Message, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Message)
+	err := c.cc.Invoke(ctx, GameServer_CloseGameRoom_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gameServerClient) SignUpUser(ctx context.Context, in *SignUpUserReq, opts ...grpc.CallOption) (*Message, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Message)
 	err := c.cc.Invoke(ctx, GameServer_SignUpUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -135,8 +161,12 @@ type GameServerServer interface {
 	// -------------- Lobby
 	// Listing game rooms
 	GetGameRooms(context.Context, *GetGameRoomsReq) (*GetGameRoomsRes, error)
+	// Create game room
+	CreateGameRoom(context.Context, *CreateGameRoomReq) (*Message, error)
+	// Close game room
+	CloseGameRoom(context.Context, *CloseGameRoomReq) (*Message, error)
 	// Signup api
-	SignUpUser(context.Context, *SignUpUserReq) (*SignUpUserRes, error)
+	SignUpUser(context.Context, *SignUpUserReq) (*Message, error)
 	// Login api
 	LoginUser(context.Context, *LoginUserReq) (*LoginUserRes, error)
 	// -------------- Game
@@ -159,7 +189,13 @@ type UnimplementedGameServerServer struct{}
 func (UnimplementedGameServerServer) GetGameRooms(context.Context, *GetGameRoomsReq) (*GetGameRoomsRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGameRooms not implemented")
 }
-func (UnimplementedGameServerServer) SignUpUser(context.Context, *SignUpUserReq) (*SignUpUserRes, error) {
+func (UnimplementedGameServerServer) CreateGameRoom(context.Context, *CreateGameRoomReq) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateGameRoom not implemented")
+}
+func (UnimplementedGameServerServer) CloseGameRoom(context.Context, *CloseGameRoomReq) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CloseGameRoom not implemented")
+}
+func (UnimplementedGameServerServer) SignUpUser(context.Context, *SignUpUserReq) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignUpUser not implemented")
 }
 func (UnimplementedGameServerServer) LoginUser(context.Context, *LoginUserReq) (*LoginUserRes, error) {
@@ -209,6 +245,42 @@ func _GameServer_GetGameRooms_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GameServerServer).GetGameRooms(ctx, req.(*GetGameRoomsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GameServer_CreateGameRoom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateGameRoomReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GameServerServer).CreateGameRoom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GameServer_CreateGameRoom_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GameServerServer).CreateGameRoom(ctx, req.(*CreateGameRoomReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GameServer_CloseGameRoom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CloseGameRoomReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GameServerServer).CloseGameRoom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GameServer_CloseGameRoom_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GameServerServer).CloseGameRoom(ctx, req.(*CloseGameRoomReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -306,6 +378,14 @@ var GameServer_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetGameRooms",
 			Handler:    _GameServer_GetGameRooms_Handler,
+		},
+		{
+			MethodName: "CreateGameRoom",
+			Handler:    _GameServer_CreateGameRoom_Handler,
+		},
+		{
+			MethodName: "CloseGameRoom",
+			Handler:    _GameServer_CloseGameRoom_Handler,
 		},
 		{
 			MethodName: "SignUpUser",

@@ -12,7 +12,10 @@ type GameRepo interface {
 	CreateUser(ctx context.Context, user *models.User) error
 	FindUserIdByEmail(ctx context.Context, email string) (string, error)
 	FindUserByEmail(ctx context.Context, email string) (*models.User, error)
+	// Game
 	ListGameRooms(ctx context.Context) ([]models.GetGameRoomDTO, error)
+	CreateGameRoom(ctx context.Context, user_id string) (string, error)
+	CloseGameRoom(ctx context.Context, game_id string) error
 	// Gameplay
 }
 

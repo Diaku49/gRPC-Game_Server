@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS games (
    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
    player1_id UUID NOT NULL,
-   player2_id UUID NOT NULL,
+   player2_id UUID,
    winner_id UUID,
 
    status GAME_STATUS NOT NULL,
@@ -29,4 +29,5 @@ CREATE TYPE GAME_STATUS AS ENUM (
     'finished'
     'in_progress'
     'cancelled'
+    'closed'
 );

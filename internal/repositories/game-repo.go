@@ -26,7 +26,44 @@ func (gr *GameDB) ListGameRooms(ctx context.Context) ([]models.GetGameRoomDTO, e
 	return gameRooms, nil
 }
 
-func (gr *GameDB) CreateGameRoom() {}
+func (gr *GameDB) CreateGameRoom(ctx context.Context, user_id string) (string, error) {
+	var game_id string
+	query := `
+	INSERT INTO games (player1_id, status, rounds_num)
+	VALUES ($1, $2, $3)
+	RETURNING id
+	`
+
+	row := gr.db.QueryRowxContext(ctx, query, user_id, "open", 0)
+	if err := row.Scan(&game_id); err != nil {
+		return "", fmt.Errorf("Couldnt creat game room, err: %v", err)
+	}
+
+	return game_id, nil
+}
+
+func (gr *GameDB) CloseGameRoom(ctx context.Context, game_id string) error {
+	query := `
+	UPDATE games
+	SET status = 'closed',
+	updated_at = NOW()
+	WHERE id = $1
+	`
+
+	result, err := gr.db.ExecContext(ctx, query, game_id)
+	if err != nil {
+		return fmt.Errorf("Failed close game room, err: %v", err)
+	}
+	affect, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("Failed affect game room row, err: %v", err)
+	}
+	if affect == 0 {
+		return fmt.Errorf("game room with this id:%s not found", game_id)
+	}
+
+	return nil
+}
 
 func (gr *GameDB) UpdateGameRoom() {}
 

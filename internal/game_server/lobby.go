@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (gs *GameServer) SignUpUser(ctx context.Context, req *pb.SignUpUserReq) (*pb.SignUpUserRes, error) {
+func (gs *GameServer) SignUpUser(ctx context.Context, req *pb.SignUpUserReq) (*pb.Message, error) {
 	hashPass, err := pkg.Hash(req.Password)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -37,7 +37,8 @@ func (gs *GameServer) SignUpUser(ctx context.Context, req *pb.SignUpUserReq) (*p
 		return nil, err
 	}
 
-	return &pb.SignUpUserRes{
+	return &pb.Message{
+		Id:      "",
 		Message: "Signed up successfully.",
 	}, nil
 }
