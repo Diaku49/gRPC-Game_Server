@@ -195,6 +195,7 @@ type LoginUserRes struct {
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	TotalWin      int32                  `protobuf:"varint,3,opt,name=total_win,json=totalWin,proto3" json:"total_win,omitempty"`
 	TotalGames    int32                  `protobuf:"varint,4,opt,name=total_games,json=totalGames,proto3" json:"total_games,omitempty"`
+	Token         string                 `protobuf:"bytes,5,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -255,6 +256,13 @@ func (x *LoginUserRes) GetTotalGames() int32 {
 		return x.TotalGames
 	}
 	return 0
+}
+
+func (x *LoginUserRes) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
 }
 
 type GetGameRoomsReq struct {
@@ -892,13 +900,14 @@ const file_game_server_proto_rawDesc = "" +
 	"\bpassword\x18\x03 \x01(\tR\bpassword\"@\n" +
 	"\fLoginUserReq\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"p\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x86\x01\n" +
 	"\fLoginUserRes\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1b\n" +
 	"\ttotal_win\x18\x03 \x01(\x05R\btotalWin\x12\x1f\n" +
 	"\vtotal_games\x18\x04 \x01(\x05R\n" +
-	"totalGames\"9\n" +
+	"totalGames\x12\x14\n" +
+	"\x05token\x18\x05 \x01(\tR\x05token\"9\n" +
 	"\x0fGetGameRoomsReq\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\x05R\x04size\"A\n" +

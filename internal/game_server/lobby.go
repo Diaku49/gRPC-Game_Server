@@ -38,7 +38,6 @@ func (gs *GameServer) SignUpUser(ctx context.Context, req *pb.SignUpUserReq) (*p
 	}
 
 	return &pb.Message{
-		Id:      "",
 		Message: "Signed up successfully.",
 	}, nil
 }
@@ -53,11 +52,17 @@ func (gs *GameServer) LoginUser(ctx context.Context, req *pb.LoginUserReq) (*pb.
 		return nil, status.Error(codes.Internal, "Password not correct.")
 	}
 
+	token, err := pkg.GenerateToken(user.Id, gs.cfg.JwtSecret)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
 	return &pb.LoginUserRes{
 		Id:         user.Id,
 		Name:       user.Name,
 		TotalWin:   user.Total_win,
 		TotalGames: user.Total_games,
+		Token:      token,
 	}, nil
 }
 

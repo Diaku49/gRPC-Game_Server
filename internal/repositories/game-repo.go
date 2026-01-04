@@ -42,15 +42,15 @@ func (gr *GameDB) CreateGameRoom(ctx context.Context, user_id string) (string, e
 	return game_id, nil
 }
 
-func (gr *GameDB) CloseGameRoom(ctx context.Context, game_id string) error {
+func (gr *GameDB) CloseGameRoom(ctx context.Context, game_id, user_id string) error {
 	query := `
 	UPDATE games
 	SET status = 'closed',
 	updated_at = NOW()
-	WHERE id = $1
+	WHERE id = $1 AND (player1_id = $2 OR player_2 = $2)
 	`
 
-	result, err := gr.db.ExecContext(ctx, query, game_id)
+	result, err := gr.db.ExecContext(ctx, query, game_id, user_id)
 	if err != nil {
 		return fmt.Errorf("Failed close game room, err: %v", err)
 	}

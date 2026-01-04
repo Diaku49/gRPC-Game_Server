@@ -15,7 +15,7 @@ type GameRepo interface {
 	// Game
 	ListGameRooms(ctx context.Context) ([]models.GetGameRoomDTO, error)
 	CreateGameRoom(ctx context.Context, user_id string) (string, error)
-	CloseGameRoom(ctx context.Context, game_id string) error
+	CloseGameRoom(ctx context.Context, game_id, user_id string) error
 	// Gameplay
 }
 

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Diaku49/grpc-game-server/pb"
+	"github.com/Diaku49/grpc-game-server/pkg"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -21,7 +22,12 @@ func (gs *GameServer) CreateGameRoom(ctx context.Context, req *pb.CreateGameRoom
 }
 
 func (gs *GameServer) CloseGameRoom(ctx context.Context, req *pb.CloseGameRoomReq) (*pb.Message, error) {
-	err := gs.db.CloseGameRoom(ctx, req.GameId)
+	userId, err := pkg.GetUserIDFromContext(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, err.Error())
+	}
+
+	err = gs.db.CloseGameRoom(ctx, req.GameId, userId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

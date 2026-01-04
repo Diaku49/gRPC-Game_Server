@@ -47,6 +47,7 @@ message LoginUserRes {
     string name = 2;
     int32 total_win = 3;
     int32 total_games = 4;
+    string token = 5;
 }
 
 message GetGameRoomsReq {
